@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: converter-configmap
 data:
-  MP3_QUEUE: "mp3"
+  IMAGE_QUEUE: "image"
   VIDEO_QUEUE: "video"

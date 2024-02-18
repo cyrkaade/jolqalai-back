@@ -10,7 +10,7 @@ def upload(f, fs, channel, access):
 
     message = {
         "video_fid": str(fid),
-        "mp3_fid": None,
+        "image_fid": None,
         "username": access["username"],
     }
 
