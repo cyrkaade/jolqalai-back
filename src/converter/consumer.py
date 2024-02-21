@@ -1,17 +1,20 @@
 import pika, sys, os
 from pymongo import MongoClient
 import gridfs
-from converter.convert import to_image  # Ensure this is correctly imported
+from convert import to_image 
 
 def main():
     client = MongoClient("host.minikube.internal", 27017)
     db_videos = client['videos']
-    db_images = client['images']  # Assuming you have a separate database or collection for images
+    db_images = client['images'] 
     fs_videos = gridfs.GridFS(db_videos)
     fs_images = gridfs.GridFS(db_images)
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
     channel = connection.channel()
+    print(os.environ.get("VIDEO_QUEUE"))
+    queue_name = os.environ.get("VIDEO_QUEUE", 'video')  # Default to 'video' if not set
+    channel.queue_declare(queue=queue_name, durable=True)
 
     def callback(ch, method, properties, body):
         err = to_image.start(body, fs_videos, fs_images, ch)

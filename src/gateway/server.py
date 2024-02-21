@@ -15,7 +15,21 @@ mongo_image = PyMongo(server, uri="mongodb://host.minikube.internal:27017/images
 fs_videos = gridfs.GridFS(mongo_video.db)
 fs_images = gridfs.GridFS(mongo_image.db)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
+def get_rabbitmq_connection():
+    try:
+        # Setup connection parameters with increased heartbeat timeout.
+        connection_params = pika.ConnectionParameters(
+            "rabbitmq",
+            heartbeat=600,  # Adjust the heartbeat timeout as necessary.
+            blocked_connection_timeout=300  # Adjust connection timeout as necessary.
+        )
+        return pika.BlockingConnection(connection_params)
+    except pika.exceptions.AMQPConnectionError as error:
+        print(f"Failed to connect to RabbitMQ: {error}")
+        # Implement retry logic here or raise to handle it at a higher level.
+        raise
+
+connection = get_rabbitmq_connection()
 channel = connection.channel()
 
 

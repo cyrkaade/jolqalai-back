@@ -1,3 +1,4 @@
+DROP USER IF EXISTS 'auth_user'@'localhost';
 CREATE USER 'auth_user'@'localhost' IDENTIFIED BY 'Auth123';
 
 CREATE DATABASE auth;
